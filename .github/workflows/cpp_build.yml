@@ -1,0 +1,35 @@
+name: C++ Build and Test
+
+on: [push, pull_request]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up C++ environment
+      uses: actions/setup-cpp@v1
+      with:
+        compiler-version: gcc-13
+
+    - name: Install CMake
+      run: sudo apt-get -y install cmake
+
+    - name: Create build directory
+      run: mkdir build
+
+    - name: Configure CMake
+      working-directory: build
+      run: cmake ..
+
+    - name: Build tests
+      working-directory: build
+      run: cmake --build .
+
+    - name: Run tests
+      working-directory: build
+      run: ctest
+
