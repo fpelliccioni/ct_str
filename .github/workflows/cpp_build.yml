@@ -17,10 +17,15 @@ jobs:
     - name: Set up C++ environment
       uses: aminya/setup-cpp@v1
       with:
-        compiler-version: gcc-13
+        compiler: gcc
+        cmake: true
+        ninja: true
+        # conan: true
+        # cppcheck: true
+        # clangtidy: true # instead of `true`, which chooses the default version, you can pass a specific version.
 
-    - name: Install CMake
-      run: sudo apt-get -y install cmake
+    # - name: Install CMake
+    #   run: sudo apt-get -y install cmake
 
     - name: Create build directory
       run: mkdir build
