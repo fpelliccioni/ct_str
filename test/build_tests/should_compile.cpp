@@ -1,14 +1,16 @@
-#include <ct/url/lex.hpp>
+#include <ct/url/lex/lex.hpp>
+#include <ct/url/parse/parse.hpp>
 
 #include <concepts>
 
-namespace lex = ct::url::lex;
-using lex::token;
-using lex::token_list;
+using ct::url::lex::tokenize_t;
+using ct::lex::token;
+using ct::lex::token_list;
+using ct::url::parse::parse_t;
 
 namespace {
 
-using toks = lex::tokenize_t<"foobar">;
+using toks = tokenize_t<"foobar">;
 
 }  // namespace
 

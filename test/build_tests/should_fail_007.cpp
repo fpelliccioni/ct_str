@@ -1,15 +1,15 @@
-#include <ct/url/lex.hpp>
+#include <ct/url/lex/lex.hpp>
 
 #include <concepts>
 
-namespace lex = ct::url::lex;
-using lex::token;
-using lex::token_list;
+using ct::url::lex::tokenize_t;
+using ct::lex::token;
+using ct::lex::token_list;
 
 namespace {
 
 // Backslashes are not typically valid in URIs unless percent-encoded.
-static_assert(std::same_as<lex::tokenize_t<"www.example\\com">, token_list<...>>);
+static_assert(std::same_as<tokenize_t<"www.example\\com">, token_list<...>>);
 
 }  // namespace
 

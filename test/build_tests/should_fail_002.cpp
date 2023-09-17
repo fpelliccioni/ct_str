@@ -1,15 +1,15 @@
-#include <ct/url/lex.hpp>
+#include <ct/url/lex/lex.hpp>
 
 #include <concepts>
 
-namespace lex = ct::url::lex;
-using lex::token;
-using lex::token_list;
+using ct::url::lex::tokenize_t;
+using ct::lex::token;
+using ct::lex::token_list;
 
 namespace {
 
 // A percent-encoded character should always have two hexadecimal digits.
-using toks = lex::tokenize_t<"foo%2">;
+using toks = tokenize_t<"foo%2">;
 
 }  // namespace
 

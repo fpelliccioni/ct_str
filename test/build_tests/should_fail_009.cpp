@@ -8,8 +8,8 @@ using ct::lex::token_list;
 
 namespace {
 
-// URIs cannot begin with a number.
-static_assert(std::same_as<tokenize_t<"123example.com">, token_list<...>>);
+// Invalid port number
+static_assert(std::same_as<tokenize_t<"www.example.com:-8080">, token_list<...>>);
 
 }  // namespace
 

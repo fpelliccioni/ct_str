@@ -11,12 +11,18 @@ enable_testing()
 
 foreach(test_file ${ALL_TEST_FILES})
     message(STATUS "Adding test ${test_file}")
-    get_filename_component(test_name ${test_file} NAME_WE)
+    get_filename_component(test_name ${test_file} NAME_WLE)
+    message(STATUS "Adding test ${test_name}")
     set(executable_name "ctutil_tests_${test_name}")
     add_executable(${executable_name} ${test_file})
     target_link_libraries(${executable_name} PUBLIC ctutils)
     add_test(NAME ${test_name} COMMAND ${executable_name})
 endforeach()
+
+# add_executable(tmp ${CMAKE_CURRENT_SOURCE_DIR}/build_tests/should_compile.cpp)
+# target_link_libraries(tmp PUBLIC ctutils)
+# add_test(NAME tmp COMMAND tmp)
+
 
 try_compile(COMPILE_SUCCEEDED
             ${CMAKE_BINARY_DIR}/tmp
@@ -31,23 +37,6 @@ if(COMPILE_SUCCEEDED)
 else()
     message(FATAL_ERROR "build_tests/should_compile.cpp: Compilation failed but was expected to succeed!")
 endif()
-
-# try_compile(COMPILE_SUCCEEDED
-#             ${CMAKE_BINARY_DIR}/tmp
-#             ${CMAKE_CURRENT_SOURCE_DIR}/build_tests/should_fail.cpp
-#             CMAKE_FLAGS
-#                 "-DCMAKE_CXX_STANDARD=20"
-#                 "-DINCLUDE_DIRECTORIES=${CMAKE_CURRENT_SOURCE_DIR}/../include"
-# )
-
-# if(NOT COMPILE_SUCCEEDED)
-#     message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}/build_tests/should_fail.cpp: Compilation failed as expected.")
-# else()
-#     message(FATAL_ERROR "${CMAKE_CURRENT_SOURCE_DIR}/build_tests/should_fail.cpp: Compilation succeeded but was expected to fail!")
-# endif()
-
-
-
 
 foreach(fail_test_file ${FAIL_TEST_FILES})
     message(STATUS "Checking ${fail_test_file}")

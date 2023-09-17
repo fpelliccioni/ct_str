@@ -4,8 +4,10 @@
 
 #pragma once
 
-#include "./meta.hpp"
-#include "../str.hpp"
+#include "../../basics.hpp"
+#include "../../str.hpp"
+#include "../../lex/token.hpp"
+#include "../../chr.hpp"
 
 #include <array>
 #include <cassert>
@@ -14,45 +16,7 @@
 
 namespace ct::url::lex {
 
-constexpr static std::size_t max_token_length = 256;
-
-/**
- * @brief Represents a URL token.
- *
- * Structural and valid as a non-type template parameter
- */
-struct token {
-    char _chars[max_token_length + 1] = {};
-
-    constexpr token() = default;
-
-    constexpr token(char const* s) {
-        auto        dst = _chars;
-        std::size_t n   = 0;
-        while (*s) {
-            ++n;
-            assert(n <= max_token_length);
-            *dst++ = *s++;
-        }
-    }
-
-    constexpr operator std::string_view() const noexcept { return std::string_view(_chars); }
-
-    constexpr char const* data() const noexcept { return _chars; }
-    constexpr std::size_t size() const noexcept { return std::char_traits<char>::length(_chars); }
-    constexpr char        operator[](std::size_t n) const noexcept {
-        assert(n < max_token_length);
-        return _chars[n];
-    }
-
-    bool operator==(token const&) const = default;
-};
-
-template <token... Tokens>
-struct token_list;
-
-constexpr bool is_digit(char c) { return c <= '9' and c >= '0'; }
-constexpr bool is_alpha(char c) { return (c >= 'a' and c <= 'z') or (c >= 'A' and c <= 'Z'); }
+using token = ct::lex::token;
 
 constexpr bool is_unreserved(char c) {
     return is_alpha(c) || is_digit(c) || c == '-' || c == '.' || c == '_' || c == '~';
@@ -86,15 +50,7 @@ constexpr bool is_reserved(char c) {
     }
 }
 
-constexpr bool is_hex_digit(char c) {
-    return (c >= '0' && c <= '9') ||
-           (c >= 'a' && c <= 'f') ||
-           (c >= 'A' && c <= 'F');
-}
-
 namespace detail {
-
-// using meta::list;
 
 constexpr auto fin_token(char const* s, std::size_t len) {
     token ret;
@@ -111,8 +67,7 @@ constexpr auto fin_token(char const* s, std::size_t len) {
 struct token_range {
     /// The beginning offset of the token
     uint32_t pos;
-    /// The length of the token (in char)
-    // uint8_t len;
+    /// The length of the token
     uint16_t len;
 };
 
@@ -127,20 +82,12 @@ constexpr token_range next_token(char const* const begin, uint32_t start_pos) {
     auto it = begin + start_pos;
     // The beginning index of the token within the string view:
     uint32_t pos = start_pos;
-    // // Skip leading whitespace
-    // while (*it == ' ' or *it == '\n') {
-    //     ++it;
-    //     ++pos;
-    // }
-
     char const first = *it;
 
-    // Checking for spaces and treating them as invalid
     if (first == ' ') {
         throw "Space is an invalid character within a URL.";
     }
 
-    // URI reserved characters
     if (is_reserved(first)) {
         return {pos, 1};
     }
@@ -212,12 +159,12 @@ constexpr token take_token(char const* str_begin, token_range const& r) {
 
 template <ct::str String, tokenize_result Result, std::size_t... I>
 auto prune_f(std::index_sequence<I...>*)
-    -> token_list<take_token(String.data(), Result.tokens[I])...>;
+    -> ct::lex::token_list<take_token(String.data(), Result.tokens[I])...>;
 
 template <ct::str String>
 auto tokenize() {
     constexpr auto res = tokenize<String.size() + 1>(String.data());
-    return meta::ptr<decltype(detail::prune_f<String, res>(
+    return ct::ptr<decltype(detail::prune_f<String, res>(
         (std::make_index_sequence<res.num_tokens>*)(nullptr)))>{};
 }
 

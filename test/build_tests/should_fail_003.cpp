@@ -1,15 +1,15 @@
-#include <ct/url/lex.hpp>
+#include <ct/url/lex/lex.hpp>
 
 #include <concepts>
 
-namespace lex = ct::url::lex;
-using lex::token;
-using lex::token_list;
+using ct::url::lex::tokenize_t;
+using ct::lex::token;
+using ct::lex::token_list;
 
 namespace {
 
 // G is not a valid hexadecimal character.
-static_assert(std::same_as<lex::tokenize_t<"foo%2Gbar">, token_list<...>>);
+static_assert(std::same_as<tokenize_t<"foo%2Gbar">, token_list<...>>);
 
 }  // namespace
 
